@@ -1,3 +1,4 @@
+#if NEWTONSOFT_EXISTS
 using System;
 using DingoAssetsLoadSystem.TextLoad;
 
@@ -64,3 +65,4 @@ namespace DingoAssetsLoadSystem.ParsedTextLoad
         }
     }
 }
+#endif

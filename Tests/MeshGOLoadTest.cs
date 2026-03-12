@@ -1,3 +1,4 @@
+#if GLTFAST || COM_UNITY_CLOUD_GLTFast
 using DingoAssetsLoadSystem.MeshGOLoad;
 using GLTFast;
 using NaughtyAttributes;
@@ -23,3 +24,4 @@ namespace DingoAssetsLoadSystem.Tests
         }
     }
 }
+#endif
