@@ -1,3 +1,4 @@
+#if GLTFAST
 namespace DingoAssetsLoadSystem.MeshGOLoad
 {
     public sealed class MeshGOKeyFactory : ICacheKeyFactory<MeshGOCacheKey, MeshGOLoadInfo>
@@ -5,3 +6,4 @@ namespace DingoAssetsLoadSystem.MeshGOLoad
         public MeshGOCacheKey CreateKey(string path, MeshGOLoadInfo info) => new(path, info);
     }
 }
+#endif

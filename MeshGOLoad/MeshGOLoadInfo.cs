@@ -1,3 +1,4 @@
+#if GLTFAST
 using System;
 using GLTFast;
 
@@ -64,3 +65,4 @@ namespace DingoAssetsLoadSystem.MeshGOLoad
         }
     }
 }
+#endif

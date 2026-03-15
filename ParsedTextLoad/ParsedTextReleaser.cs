@@ -1,3 +1,4 @@
+#if NEWTONSOFT_EXISTS
 namespace DingoAssetsLoadSystem.ParsedTextLoad
 {
     public sealed class ParsedTextReleaser<T> : IAssetReleaser<T, ParsedTextLoadInfo<T>> where T : class
@@ -9,3 +10,4 @@ namespace DingoAssetsLoadSystem.ParsedTextLoad
         }
     }
 }
+#endif

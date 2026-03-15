@@ -1,3 +1,4 @@
+#if GLTFAST
 using System;
 using System.IO;
 using System.Threading;
@@ -145,3 +146,4 @@ namespace DingoAssetsLoadSystem.MeshLoad
         }
     }
 }
+#endif

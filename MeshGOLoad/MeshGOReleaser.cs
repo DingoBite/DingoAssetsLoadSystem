@@ -1,3 +1,4 @@
+#if GLTFAST
 using Object = UnityEngine.Object;
 
 namespace DingoAssetsLoadSystem.MeshGOLoad
@@ -26,3 +27,4 @@ namespace DingoAssetsLoadSystem.MeshGOLoad
         }
     }
 }
+#endif

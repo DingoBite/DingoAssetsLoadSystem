@@ -1,3 +1,4 @@
+#if GLTFAST
 using UnityEngine;
 
 namespace DingoAssetsLoadSystem.MeshGOLoad
@@ -46,3 +47,4 @@ namespace DingoAssetsLoadSystem.MeshGOLoad
         }
     }
 }
+#endif

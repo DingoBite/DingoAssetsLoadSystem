@@ -1,3 +1,4 @@
+#if NEWTONSOFT_EXISTS
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using DingoAssetsLoadSystem.TextLoad;
@@ -24,3 +25,4 @@ namespace DingoAssetsLoadSystem.ParsedTextLoad
         }
     }
 }
+#endif
