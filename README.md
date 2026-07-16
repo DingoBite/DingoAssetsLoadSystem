@@ -37,6 +37,7 @@ Instead of scattering asset-specific code around UI, gameplay, and scene control
 | `TextLoad` | `TextFileAsset` | local files and remote URIs | Optional byte retention, decoding, BOM stripping, newline normalization, file stamp based cache keys |
 | `ParsedTextLoad` | generic parsed object `T` | text source + parser | Requires `NEWTONSOFT_EXISTS`; can parse on thread pool |
 | `Texture2DLoad` | `Texture2D` | local files and remote URIs | Configurable readability, mipmaps, linear color space |
+| `SpriteLoad` | `Sprite` | local images and remote URIs | Shared Sprite keyed by path + import info; pixel-art defaults to Point, Clamp, and FullRect |
 | `AudioClipLoad` | `AudioClip` | local files and remote URIs | Configurable `AudioType`, streaming, compressed-in-memory mode |
 | `MeshLoad` | `Mesh` | `.gltf` / `.glb` | Requires `GLTFAST`; can select mesh, combine meshes, recalc normals/bounds |
 | `MeshGOLoad` | `MeshGOAsset` | `.gltf` / `.glb` | Requires `GLTFAST` or `COM_UNITY_CLOUD_GLTFast`; imports a reusable prototype hierarchy |
@@ -286,6 +287,14 @@ Behavior:
 - assigns texture into `RawImage`;
 - updates `AspectRatioFitter`;
 - optionally adjusts `LayoutElement` width and height from texture aspect ratio.
+
+### `SpriteLoad`
+
+`SpriteLoad` follows the full typed `Texture2DLoad` pipeline but caches a ready-to-render `Sprite` instead of only the source texture. `SpriteLoadInfo` includes texture settings, pivot, PPU, extrude, mesh type, border, physics-shape generation, and sampling; every option participates in cache identity.
+
+The default profile targets pixel art: centered pivot, 100 PPU, `FilterMode.Point`, `TextureWrapMode.Clamp`, `SpriteMeshType.FullRect`, and no fallback physics shape. Many `ComponentView` instances using the same path therefore share one `Sprite` without running `Sprite.Create` or tight-mesh tracing per object.
+
+`SpriteLoadWrapper` can assign the shared asset to an `Image` or `SpriteRenderer`, clear it on unload, and publish the applied state to its presentation owner through `Applied`. The wrapper owns only receiver lifetime; `SpriteGlobal.Cache` destroys the `Sprite` and its owned downloaded `Texture2D` after the last receiver releases it.
 
 ### `AudioClipLoad`
 
@@ -551,6 +560,7 @@ DingoAssetsLoadSystem/
   MeshGOLoad/
   MeshLoad/
   ParsedTextLoad/
+  SpriteLoad/
   TextLoad/
   Texture2DLoad/
   Tests/

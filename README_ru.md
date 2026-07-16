@@ -37,6 +37,7 @@
 | `TextLoad` | `TextFileAsset` | локальные файлы и remote URI | Опциональное сохранение байтов, декодирование, удаление BOM, нормализация переводов строк, ключи кеша на основе file stamp |
 | `ParsedTextLoad` | generic-объект `T` после парсинга | текстовый источник + парсер | Требует `NEWTONSOFT_EXISTS`; может парсить в thread pool |
 | `Texture2DLoad` | `Texture2D` | локальные файлы и remote URI | Настраиваемые readability, mipmaps, linear color space |
+| `SpriteLoad` | `Sprite` | локальные изображения и remote URI | Общий Sprite по ключу path + import info; pixel-art по умолчанию использует Point, Clamp и FullRect |
 | `AudioClipLoad` | `AudioClip` | локальные файлы и remote URI | Настраиваемые `AudioType`, streaming, compressed-in-memory mode |
 | `MeshLoad` | `Mesh` | `.gltf` / `.glb` | Требует `GLTFAST`; умеет выбирать mesh, объединять меши, пересчитывать normals/bounds |
 | `MeshGOLoad` | `MeshGOAsset` | `.gltf` / `.glb` | Требует `GLTFAST` или `COM_UNITY_CLOUD_GLTFast`; импортирует переиспользуемую prototype hierarchy |
@@ -286,6 +287,14 @@ Compile-time зависимость:
 - назначает текстуру в `RawImage`;
 - обновляет `AspectRatioFitter`;
 - при необходимости подстраивает `LayoutElement` по aspect ratio текстуры.
+
+### `SpriteLoad`
+
+`SpriteLoad` повторяет полный типизированный pipeline `Texture2DLoad`, но кеширует уже готовый `Sprite`, а не только исходную текстуру. `SpriteLoadInfo` включает texture-настройки, pivot, PPU, extrude, mesh type, border, physics-shape и sampling; все эти параметры участвуют в cache identity.
+
+Профиль по умолчанию предназначен для pixel-art: pivot по центру, 100 PPU, `FilterMode.Point`, `TextureWrapMode.Clamp`, `SpriteMeshType.FullRect` и без fallback physics shape. Поэтому многочисленные `ComponentView` с одинаковым путём разделяют один `Sprite` и не запускают `Sprite.Create`/tight-mesh tracing на каждом объекте.
+
+`SpriteLoadWrapper` умеет назначать общий ассет в `Image` или `SpriteRenderer`, очищать ссылку при unload и сообщать presentation-владельцу применённое состояние через `Applied`. Сам wrapper владеет только receiver-lifetime; `SpriteGlobal.Cache` уничтожает `Sprite` и принадлежащую ему загруженную `Texture2D` после освобождения последнего receiver.
 
 ### `AudioClipLoad`
 
@@ -551,6 +560,7 @@ DingoAssetsLoadSystem/
   MeshGOLoad/
   MeshLoad/
   ParsedTextLoad/
+  SpriteLoad/
   TextLoad/
   Texture2DLoad/
   Tests/
