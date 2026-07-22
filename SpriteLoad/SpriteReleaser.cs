@@ -10,9 +10,9 @@ namespace DingoAssetsLoadSystem.SpriteLoad
                 return;
 
             var texture = asset.texture;
-            Object.Destroy(asset);
+            SpriteLoadUnityUtils.DestroyObject(asset);
             if (texture != null)
-                Object.Destroy(texture);
+                SpriteLoadUnityUtils.DestroyObject(texture);
         }
     }
 }

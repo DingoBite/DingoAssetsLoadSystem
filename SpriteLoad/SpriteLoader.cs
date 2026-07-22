@@ -50,7 +50,7 @@ namespace DingoAssetsLoadSystem.SpriteLoad
             finally
             {
                 if (sprite == null && texture != null)
-                    Object.Destroy(texture);
+                    SpriteLoadUnityUtils.DestroyObject(texture);
             }
         }
     }
