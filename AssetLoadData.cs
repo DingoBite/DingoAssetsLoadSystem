@@ -254,6 +254,13 @@ namespace DingoAssetsLoadSystem
                 return;
             }
 
+            // The operation is complete. Keeping its CTS on the live cache entry
+            // makes the last receiver cancel an already completed UnityWebRequest
+            // during Release. Apart from being unnecessary, that can poison a
+            // subsequent request for the same local file in the Unity player loop.
+            entry.Cts?.Dispose();
+            entry.Cts = null;
+
             if (error != null)
             {
                 entry.Flow.V = new AssetLoadData<TAsset, TInfo>(entry.Path, entry.Info, null, AssetLoadState.Failed, error);
