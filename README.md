@@ -355,14 +355,17 @@ Behavior:
 
 - Supports only `.gltf` and `.glb`.
 - Loads mesh data through `glTFast`.
+- `MeshLoader.LoadBytesAsync` imports captured glTF/GLB bytes directly, avoiding a temporary-file/download roundtrip. An optional base URI resolves external resources; embedded GLB geometry needs no URI. It uses the same mesh ownership, postprocessing and cancellation path as `LoadAsync`.
 - Can select a mesh by `MeshName` or `MeshIndex`.
 - Can combine all imported meshes into one generated mesh.
 - Can recalculate normals and bounds.
 - Can mark the result as no longer readable via `UploadMeshData(true)`.
+- EditMode imports use an import-local `UninterruptedDeferAgent`; Play Mode retains glTFast's normal default scheduling. The loader never changes the global defer agent.
+- The importer owns its source meshes and disposes them once; the returned mesh is an independent selected clone or combined mesh.
 
 Release:
 
-- The final owned mesh instance is destroyed on unload.
+- The final owned mesh instance is destroyed on unload (`DestroyImmediate` outside Play Mode).
 
 `MeshLoadWrapper` can assign the mesh into:
 

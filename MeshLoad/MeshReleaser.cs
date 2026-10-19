@@ -8,7 +8,12 @@ namespace DingoAssetsLoadSystem.MeshLoad
         public void Release(Mesh asset, string path, MeshLoadInfo info)
         {
             if (asset != null)
-                Object.Destroy(asset);
+            {
+                if (Application.isPlaying)
+                    Object.Destroy(asset);
+                else
+                    Object.DestroyImmediate(asset);
+            }
         }
     }
 }

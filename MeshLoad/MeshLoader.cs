@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using GLTFast;
 using UnityEngine;
@@ -20,10 +21,24 @@ namespace DingoAssetsLoadSystem.MeshLoad
             if (ext != ".gltf" && ext != ".glb")
                 throw new NotSupportedException($"MeshLoader supports only .gltf/.glb. Got: {ext}");
 
-            var gltf = new GltfImport();
+            return await ImportAsync(gltf => gltf.Load(uri, importSettings: null, cancellationToken: ct), info, ct);
+        }
+
+        // Import captured glTF/GLB bytes without a temporary file or download request.
+        // Supply baseUri when the document contains relative external resources.
+        public UniTask<Mesh> LoadBytesAsync(byte[] data, MeshLoadInfo info, CancellationToken ct, Uri baseUri = null)
+            => ImportAsync(gltf => gltf.Load(data, baseUri, importSettings: null, cancellationToken: ct), info, ct);
+
+        private async UniTask<Mesh> ImportAsync(Func<GltfImport, Task<bool>> load, MeshLoadInfo info, CancellationToken ct)
+        {
+            await UniTask.SwitchToMainThread(ct);
+            // glTFast's default agent creates a persistent scene object, which is
+            // only valid in Play Mode. Keep its normal runtime scheduling while
+            // using an import-local, object-free agent for Editor preparation.
+            var gltf = new GltfImport(deferAgent: Application.isPlaying ? null : new UninterruptedDeferAgent());
             try
             {
-                var loaded = await gltf.Load(uri, importSettings: null, cancellationToken: ct);
+                var loaded = await load(gltf);
                 if (!loaded)
                     return null;
 
@@ -52,14 +67,6 @@ namespace DingoAssetsLoadSystem.MeshLoad
                         ownedMesh.name = selected.name;
                     }
                 }
-
-                foreach (var m in importedMeshes)
-                {
-                    if (m != null)
-                        Object.Destroy(m);
-                }
-
-                gltf.Dispose();
 
                 if (ownedMesh == null)
                     return null;
